@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "270011241110",
+    "firebase_url": "https://completefirestore-e4538.firebaseio.com",
+    "project_id": "completefirestore-e4538",
+    "storage_bucket": "completefirestore-e4538.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270011241110:android:3ce41291b9b0e0aa",
+        "android_client_info": {
+          "package_name": "com.example.pratyush.completefirestore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270011241110-a70jipt305j9mscpjb9110v0uqbpcs44.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqnJcHz3x0juGR6QVbUCnTPE21PXjudF4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
