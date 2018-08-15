@@ -1,6 +1,9 @@
 package com.example.pratyush.completefirestore;
 
+import com.google.firebase.firestore.Exclude;
+
 public class NoteModel {
+    private String documentId;
     private String title;
     private String description;
 
@@ -27,5 +30,13 @@ public class NoteModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    @Exclude
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 }

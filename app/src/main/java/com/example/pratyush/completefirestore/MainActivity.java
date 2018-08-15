@@ -64,9 +64,12 @@ public class MainActivity extends AppCompatActivity {
                 String data="";
                 for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
                     NoteModel note=documentSnapshot.toObject(NoteModel.class);
+                    note.setDocumentId(documentSnapshot.getId());
+                    String documentId=note.getDocumentId();
                     String title=note.getTitle();
                     String description=note.getDescription();
-                    data+="Title: "+title+"\nDescription "+description+"\n\n";
+                    data+="ID: "+documentId+"\nTitle: "+title+"\nDescription "+description+"\n\n";
+
                 }
                 textViewData.setText(data);
             }
@@ -90,9 +93,11 @@ public class MainActivity extends AppCompatActivity {
                         String data="";
                         for(QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
                             NoteModel note=documentSnapshot.toObject(NoteModel.class);
+                            note.setDocumentId(documentSnapshot.getId());
+                            String documentId=note.getDocumentId();
                             String title=note.getTitle();
                             String description=note.getDescription();
-                            data+="Title: "+title+"\nDescription: "+description+"\n\n";
+                            data+="ID "+documentId+"\nTitle: "+title+"\nDescription: "+description+"\n\n";
                         }
                         textViewData.setText(data);
                     }
