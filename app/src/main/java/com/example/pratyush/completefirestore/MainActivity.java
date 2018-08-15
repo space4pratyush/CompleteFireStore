@@ -57,8 +57,13 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (documentSnapshot.exists()){
-                    String title=documentSnapshot.getString(KEY_TITLE);
-                    String description=documentSnapshot.getString(KEY_DESCRIPTION);
+//                    String title=documentSnapshot.getString(KEY_TITLE);
+//                    String description=documentSnapshot.getString(KEY_DESCRIPTION);
+//                    textViewData.setText("Title: "+title+"\n"+"Description: "+description);
+//                    Again I am using java object here
+                    NoteModel note=documentSnapshot.toObject(NoteModel.class);
+                    String title=note.getTitle();
+                    String description=note.getDescription();
                     textViewData.setText("Title: "+title+"\n"+"Description: "+description);
                 }
                 else {
@@ -72,11 +77,13 @@ public class MainActivity extends AppCompatActivity {
         String title=editTextTitle.getText().toString();
         String description=editTextDescription.getText().toString();
 //      for putting the above data in a container, using Map interface
-        Map<String, Object> note=new HashMap<>();
-
-//        here we are inserting our key value pair
-        note.put(KEY_TITLE, title);
-        note.put(KEY_DESCRIPTION,description);
+//        Map<String, Object> note=new HashMap<>();
+//
+////        here we are inserting our key value pair
+//        note.put(KEY_TITLE, title);
+//        note.put(KEY_DESCRIPTION,description);
+//        Instead of Map, I am now using java model class object, I had used map above
+        NoteModel note=new NoteModel(title,description);
 
 //       passing the note value to our firebase database
 //        db.collection("Notebook/My First Note") is also an another method to create collection and documents
@@ -119,9 +126,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()){
-                            String title=documentSnapshot.getString(KEY_TITLE);
-                            String description=documentSnapshot.getString(KEY_DESCRIPTION);
+//                            String title=documentSnapshot.getString(KEY_TITLE);
+//                            String description=documentSnapshot.getString(KEY_DESCRIPTION);
 //                            Map<String,Object> note=documentSnapshot.getData();
+//                            Now using Note
+                            NoteModel note=documentSnapshot.toObject(NoteModel.class);
+                            String title=note.getTitle();
+                            String description=note.getDescription();
                             textViewData.setText("Title: "+title+"\n"+"Description: "+description);
                         }
                         else {
