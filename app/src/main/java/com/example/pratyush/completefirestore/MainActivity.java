@@ -1,5 +1,6 @@
 package com.example.pratyush.completefirestore;
 
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,16 +12,21 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
 import javax.annotation.Nullable;
 
@@ -34,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 //    for setting up firebase database
     private FirebaseFirestore db=FirebaseFirestore.getInstance();
 //    for fetching data from firestore database
+    private CollectionReference notebookRef=db.collection("Notebook");
     private DocumentReference noteRef=db.collection("Notebook").document("My First Note");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,104 +54,47 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        noteRef.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+        //for showing data while after app installation
+        notebookRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
                 if (e!=null){
-                    Toast.makeText(MainActivity.this, "Error while loading", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, e.toString());
                     return;
                 }
-                if (documentSnapshot.exists()){
-//                    String title=documentSnapshot.getString(KEY_TITLE);
-//                    String description=documentSnapshot.getString(KEY_DESCRIPTION);
-//                    textViewData.setText("Title: "+title+"\n"+"Description: "+description);
-//                    Again I am using java object here
+                String data="";
+                for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
                     NoteModel note=documentSnapshot.toObject(NoteModel.class);
                     String title=note.getTitle();
                     String description=note.getDescription();
-                    textViewData.setText("Title: "+title+"\n"+"Description: "+description);
+                    data+="Title: "+title+"\nDescription "+description+"\n\n";
                 }
-                else {
-                    textViewData.setText("");
-                }
+                textViewData.setText(data);
             }
         });
     }
 
-    public void saveNote(View v){
+    public void addNote(View v){
         String title=editTextTitle.getText().toString();
         String description=editTextDescription.getText().toString();
-//      for putting the above data in a container, using Map interface
-//        Map<String, Object> note=new HashMap<>();
-//
-////        here we are inserting our key value pair
-//        note.put(KEY_TITLE, title);
-//        note.put(KEY_DESCRIPTION,description);
-//        Instead of Map, I am now using java model class object, I had used map above
+
         NoteModel note=new NoteModel(title,description);
-
-//       passing the note value to our firebase database
-//        db.collection("Notebook/My First Note") is also an another method to create collection and documents
-        db.collection("Notebook").document("My First Note").set(note)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(MainActivity.this, "Note Saved", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG,e.toString());
-
-                    }
-                });
+        notebookRef.add(note);
 
     }
-    public void updateDescription(View v){
-        String description=editTextDescription.getText().toString();
-//        Map<String, Object> note=new HashMap<>();
-//        note.put(KEY_DESCRIPTION,description);
-//        noteRef.set(note, SetOptions.merge());
-        noteRef.update(KEY_DESCRIPTION, description);
-    }
-    public void deleteDescription(View v){
-//        Map<String, Object> note=new HashMap<>();
-//        note.put(KEY_DESCRIPTION, FieldValue.delete());
-//        noteRef.update(note);
-        noteRef.update(KEY_DESCRIPTION,FieldValue.delete());
-    }
-    public void deleteNote(View v){
-        noteRef.delete();
-    }
-    public void loadNote(View v){
-        noteRef.get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+    public void loadNotes(View v) {
+        notebookRef.get()
+//                QuerySnapshot here contains multiple snapshot of document
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists()){
-//                            String title=documentSnapshot.getString(KEY_TITLE);
-//                            String description=documentSnapshot.getString(KEY_DESCRIPTION);
-//                            Map<String,Object> note=documentSnapshot.getData();
-//                            Now using Note
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        String data="";
+                        for(QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
                             NoteModel note=documentSnapshot.toObject(NoteModel.class);
                             String title=note.getTitle();
                             String description=note.getDescription();
-                            textViewData.setText("Title: "+title+"\n"+"Description: "+description);
+                            data+="Title: "+title+"\nDescription: "+description+"\n\n";
                         }
-                        else {
-                            Toast.makeText(MainActivity.this, "Document does not exist", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, "Erro", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG,e.toString());
+                        textViewData.setText(data);
                     }
                 });
     }
